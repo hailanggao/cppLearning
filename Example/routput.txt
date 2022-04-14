@@ -1,0 +1,16 @@
+Student ID: 12345678
+Semester: 1
+Unit ID: ICT283
+Unit Name: Data Structure and Abstractions
+Credits: 3
+Mark: 90.0
+Date: 30 June 2016
+
+Unit ID: ICT289
+Unit Name: Computer Graphics
+Credits: 3
+Mark: 97.0
+Date: 30 December 2016
+
+Number of units = 2
+Total credits = 6

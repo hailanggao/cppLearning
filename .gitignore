@@ -1,0 +1,14 @@
+*.vs
+bin
+obj
+*.out
+html
+x64
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.layout
+*.depend
+*.cbp
+
