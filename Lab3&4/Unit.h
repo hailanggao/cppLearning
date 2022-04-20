@@ -9,7 +9,7 @@
 /**
  * @class UNIT
  * unit has id, name, and credits
- * @author Laura
+ * @author Gordon
  * @version 01
  * @date 31/03/2022
  */

@@ -12,7 +12,7 @@ const unsigned MaxResults = 10;
  * @class Registration
  * register student detail with student ID,
  * number of result, array of result name and semester.
- * @author Laura
+ * @author Gordon
  * @version 01
  * @date 31/02/22
  */

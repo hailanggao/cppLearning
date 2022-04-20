@@ -14,7 +14,7 @@ using namespace std;
 /**
  * @class Result
  * Manages Unit Result marks
- * @author Laura
+ * @author Gordon
  * @version 01
  * @date 31/03/22
  */
