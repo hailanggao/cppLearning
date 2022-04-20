@@ -1,6 +1,5 @@
 #ifndef TIME_H_INCLUDED
 #define TIME_H_INCLUDED
-
 #include <iostream>
 class Time {
 

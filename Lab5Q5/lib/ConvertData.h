@@ -1,5 +1,13 @@
+
 #ifndef CONVERTDATA_H_INCLUDED
 #define CONVERTDATA_H_INCLUDED
+
+
+#include <iostream>
+#include <string>
+#include <tuple>
+#include <fstream>
+#include <sstream>
 
 /**
 * Convert string time (e.g., "hour:minute")

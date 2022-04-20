@@ -4,11 +4,11 @@
 #include <sstream>
 #include <tuple>
 
-#include "date.h"
-#include "time.h"
-#include "vector.h"
-#include "ConvertData.h"
-#include "Math.h"
+#include "../lib/date.h"
+#include "../lib/Time.h"
+#include "../lib/vector.h"
+#include "../lib/ConvertData.h"
+#include "../lib/Math.h"
 
 typedef struct {
     Date d;
@@ -20,7 +20,7 @@ int main() {
     
     //open file, return -1 if the input file does not exist
     std::ifstream myFile;
-    myFile.open("MetData-31-3.csv");
+    myFile.open("./MetData-31-3.csv");
     if (!myFile) return -1;
 
     std::string line;
