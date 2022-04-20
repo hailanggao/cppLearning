@@ -10,9 +10,9 @@ public:
 	Vector(const Vector<T>& v);
 	~Vector();
 	void clear();
-	void push(T& data);
+	void push(const T& data);
 	void pop();
-	void insert(unsigned index, T& data);
+	void insert(unsigned index, const T& data);
 	T& get(unsigned index) const;
 	unsigned getSize() const;
 	unsigned getCapacity() const;
@@ -46,7 +46,7 @@ Vector<T>::Vector(const Vector<T>& v) {
 }
 
 template<class T>
-void Vector<T>::push(T& data) {
+void Vector<T>::push(const T& data) {
 	if (mySize == capacity) {
 		T* tmp = new T[2 * capacity];
 		for (unsigned i = 0; i < capacity; i++) {
@@ -72,7 +72,7 @@ void Vector<T>::pop() {
 }
 
 template<class T>
-void Vector<T>::insert(unsigned index, T& data) {
+void Vector<T>::insert(unsigned index, const T& data) {
 	if (index == capacity) {
 		push(data);
 	}
