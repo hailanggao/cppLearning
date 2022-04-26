@@ -64,8 +64,6 @@ int main() {
             break;
         }
     }
-
-
     for (int i = 0; i < 4; i++) {
         if (i == 3) {
             std::cout << "[ERROR] Invalid input multi times, program will exit..." << std::endl;
@@ -76,11 +74,11 @@ int main() {
         std::cout << "  [S] :Wind Seed, [SR] : Solar Radiation, [T]Ambient Air), [ALL]: ";
         std::cin >> attr;
         std::transform(attr.begin(), attr.end(), attr.begin(), ::toupper);
-        if (attr == "S" || attr == "ALL") {
+        if (attr == "SR" || attr == "T" || attr == "ALL") {
             std::cout << "--------------" << std::endl;
             break;
         }
-        else if (attr == "SR" || attr == "T") {
+        else if (attr == "S") {
             std::cout << "--------------" << std::endl;
             for (int n = 0; n < 4; n++) {
                 if (n == 3) {
@@ -204,12 +202,26 @@ int main() {
     }
     //close the input file
     myFile.close();
-    std::sort(windlog.begin(), windlog.end(), compareMonth);
     std::sort(temperlog.begin(), temperlog.end(), compareMonth);
     std::sort(radilog.begin(), radilog.end(), compareMonth);
 
-
-    std::cout << "Please press return key to exit." << std::endl;
+    if (attr == S) {
+        Date tmp;
+        tmp.SetMonth(month);
+        tmp.SetYear(year);
+        auto itMonth = std::find_if(windlog.begin(), windlog.end(), [&month](const LogType& l) { return l.d.GetMonth() == month;});
+        auto itYear = std::find_if(windlog.begin(), windlog.end(), [&year](const LogType& l) { return l.d.GetYear() == year;});
+        if (itMonth == windlog.end() || itYear == windlog.end()) {
+            std::cout << tmp.ConvertMonthToString() << " " << year << ": No Data" << std::endl;
+            return 0;
+        }
+        //If we find the data, then we sort them regarding month
+        std::sort(windlog.begin(), windlog.end(), compareMonth);
+        //if (itYear != windlog.end()) { // we find the year
+        //    
+        //}
+    }
+   
     return 0;
 }
 

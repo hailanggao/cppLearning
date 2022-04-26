@@ -38,11 +38,11 @@ class Date {
      * @return string
      */
     std::string ToString();
+    std::string ConvertMonthToString();
 
    private:
     unsigned m_day;
     unsigned m_month;
     unsigned m_year;
-    std::string ConvertMonthToString();
 };
 #endif
