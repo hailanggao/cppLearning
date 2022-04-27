@@ -34,7 +34,8 @@ float meanCal(Vector<float> dataArray, int len) {
 * @return sd
 */
 float sdCal(Vector<float> dataArray, int len) {
-	if (len == 0) return 0.0;
+	if (len == 0 || len == 1) return 0.0;
+
 	float mean = meanCal(dataArray, len);
 
 	float sum = 0.0;

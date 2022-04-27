@@ -68,4 +68,18 @@ bool isNumber(const std::string& s) {
     return true;
 }
 
+bool isDecimal(const std::string& s) {
+    if (s == "") return false;
+    bool flag = false;
+    for (char const& ch : s) {
+        if (std::isdigit(ch) == 0) {
+            if (!flag) {
+                if (ch == '.') flag = true;
+            }
+            else return false;
+        }
+    }
+    return true;
+    
+}
 #endif

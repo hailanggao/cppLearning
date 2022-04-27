@@ -123,7 +123,7 @@ Vector<T>::~Vector() {
 template<class T>
 void Vector<T>::clear() {
 	mySize = 0;
-	capacity = 0;
-	arr = 0;
+	capacity = 1;
+	delete[] arr;
 }
 #endif

@@ -22,13 +22,14 @@ bool compareMonth(LogType l1, LogType l2) {
 }
 
 int main() {
+    //std::wcout << "is it a decimal: " << isDecimal("2.1") << std::endl;
     std::string fileName;
     std::ifstream myFile;
     std::string attr;
     std::string yearInput;
     std::string monthInput = "-1";
-    unsigned year;
-    unsigned month;
+    unsigned year = 0000;
+    unsigned month = 0;
     const std::string WAST = "WAST";
     const std::string S = "S";
     const std::string T = "T";
@@ -154,7 +155,7 @@ int main() {
                 Date date;
                 Time time;
                 std::tie(date, time) = splitDate(sub);
-                if ((date.GetYear()) == year) {
+                if ((date.GetYear()) == year) { // We only push the year we are interested in
                     wl.d = date;
                     tl.d = date;
                     rl.d = date;
@@ -162,7 +163,7 @@ int main() {
             }
 
             else if (i == S_Index) {
-                if (isNumber(sub)) {
+                if (isNumber(sub) || isDecimal(sub)) {
                     float speed = std::stof(sub);
                     wl.value = msToKmh(speed);
                 }
@@ -173,7 +174,7 @@ int main() {
             }
 
             else if (i == T_Index) {
-                if (isNumber(sub)) {
+                if (isNumber(sub) || isDecimal(sub)) {
                     float temper = std::stof(sub);
                     tl.value = temper;
                 }
@@ -184,9 +185,9 @@ int main() {
             }
 
             else if(i == SR_Index) {
-                if (isNumber(sub)) {
+                if (isNumber(sub) || isDecimal(sub)) {
                     float radi = std::stof(sub);
-                    rl.value = radi;
+                    if(radi >= 100) rl.value = (radi * 1/6) / 1000;
                 }
                 else {
                     constexpr float radi = std::numeric_limits<float>::infinity();
@@ -202,7 +203,7 @@ int main() {
     }
     //close the input file
     myFile.close();
-    std::sort(temperlog.begin(), temperlog.end(), compareMonth);
+    
     std::sort(radilog.begin(), radilog.end(), compareMonth);
 
     if (attr == S) {
@@ -211,17 +212,101 @@ int main() {
         tmp.SetYear(year);
         auto itMonth = std::find_if(windlog.begin(), windlog.end(), [&month](const LogType& l) { return l.d.GetMonth() == month;});
         auto itYear = std::find_if(windlog.begin(), windlog.end(), [&year](const LogType& l) { return l.d.GetYear() == year;});
-        if (itMonth == windlog.end() || itYear == windlog.end()) {
+        if (itYear == windlog.end()) {
+            std::cout << tmp.ConvertMonthToString() << " " << year << ": No Data" << std::endl;
+            return 0;
+        }
+        if (itMonth == windlog.end() ) {
             std::cout << tmp.ConvertMonthToString() << " " << year << ": No Data" << std::endl;
             return 0;
         }
         //If we find the data, then we sort them regarding month
         std::sort(windlog.begin(), windlog.end(), compareMonth);
-        //if (itYear != windlog.end()) { // we find the year
-        //    
-        //}
+
+        Vector<float> speedArray;
+        for (auto& wlog : windlog) {
+            if ( wlog.d.GetMonth() == month) {
+                if (!isinf(wlog.value)) {
+                    speedArray.push(wlog.value);
+                }
+            }
+            else if(wlog.d.GetMonth() > month) { 
+                float averageSpeed = meanCal(speedArray, speedArray.getSize());
+                float sdSpeed = sdCal(speedArray, speedArray.getSize());
+                std::cout << tmp.ConvertMonthToString() << " " << year << ":" << std::endl;
+                std::cout << "Average speed: " << averageSpeed << " km/h" << std::endl;
+                std::cout << "Sample stdev: " << sdSpeed << std::endl;
+                return 0;
+            }
+            else {
+                continue;
+            }
+        }
+        float averageSpeed = meanCal(speedArray, speedArray.getSize());
+        float sdSpeed = sdCal(speedArray, speedArray.getSize());
+        std::cout << tmp.ConvertMonthToString() << " " << year << ":" << std::endl;
+        std::cout << "Average speed: " << averageSpeed << " km/h" << std::endl;
+        std::cout << "Sample stdev: " << sdSpeed << std::endl;
     }
    
+    if (attr == T) {
+        Date temperDate;
+        temperDate.SetYear(year);
+        std::cout << year << std::endl;
+        auto itYear = std::find_if(windlog.begin(), windlog.end(), [&year](const LogType& l) { return l.d.GetYear() == year;});
+        if (itYear == windlog.end()) {
+            for (int i = 1; i < 13; i++) {
+                temperDate.SetMonth(i);
+                std::cout << temperDate.ConvertMonthToString() << " : No Data" << std::endl;
+            }
+            return 0;
+        }
+
+        std::sort(temperlog.begin(), temperlog.end(), compareMonth);
+        Vector<float> temperArray;
+        unsigned int month = 1;
+
+        Date t;
+        //the first log month should be the least month
+        //monthes before least month should have no data
+        if (month < temperlog.get(0).d.GetMonth()) {
+            for (int j = month; j < temperlog.get(0).d.GetMonth(); j++) {
+                t.SetMonth(j);
+                std::cout << t.ConvertMonthToString() << " : No Data" << std::endl;
+            }
+            month = temperlog.get(0).d.GetMonth();
+        }
+        for (auto& temperItem : temperlog) {
+            if (temperItem.d.GetMonth() == month) {
+                if (!isinf(temperItem.value)) temperArray.push(temperItem.value);
+            }
+            else {
+                t.SetMonth(month);
+                month++;
+                float averageTemper = meanCal(temperArray, temperArray.getSize());
+                float sdTemper = sdCal(temperArray, temperArray.getSize());
+                std::cout << t.ConvertMonthToString() << ": average: " << averageTemper << " degrees C, stdev: " << sdTemper << std::endl;
+                Vector<float> temperArray;
+                while (month < temperItem.d.GetMonth()) {
+                    t.SetMonth(month);
+                    std::cout << t.ConvertMonthToString() << " : No Data" << std::endl;
+                    month++;
+                }
+                if (temperItem.d.GetMonth() == month) {
+                    if (!isinf(temperItem.value)) temperArray.push(temperItem.value);
+                }
+            }
+        }
+        t.SetMonth(month);
+        float averageTemper = meanCal(temperArray, temperArray.getSize());
+        float sdTemper = sdCal(temperArray, temperArray.getSize());
+        std::cout << t.ConvertMonthToString() << ": average: " << averageTemper << " degrees C, stdev: " << sdTemper << std::endl;
+        //If last month is not Dec, we continue to print no data
+        while (++month < 13) {
+            t.SetMonth(month);
+            std::cout << t.ConvertMonthToString() << " : No Data" << std::endl;
+        }
+    }
     return 0;
 }
 
