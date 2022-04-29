@@ -34,6 +34,7 @@ int main() {
     const std::string S = "S";
     const std::string T = "T";
     const std::string SR = "SR";
+    const std::string ALL = "ALL";
     int WAST_Index = -1;
     int S_Index = -1;
     int T_Index = -1;
@@ -307,6 +308,65 @@ int main() {
             std::cout << t.ConvertMonthToString() << " : No Data" << std::endl;
         }
     }
+
+    if (attr == SR) {
+        Date SRDate;
+        SRDate.SetYear(year);
+        std::cout << year << std::endl;
+        auto itYear = std::find_if(radilog.begin(), radilog.end(), [&year](const LogType& l) { return l.d.GetYear() == year;});
+        if (itYear == radilog.end()) {
+            for (int i = 1; i < 13; i++) {
+                SRDate.SetMonth(i);
+                std::cout << SRDate.ConvertMonthToString() << " : No Data" << std::endl;
+            }
+            return 0;
+        }
+
+        std::sort(radilog.begin(), radilog.end(), compareMonth);
+        Vector<float> radiArray;
+        unsigned int month = 1;
+
+        Date t;
+        if (month < radilog.get(0).d.GetMonth()) {
+            for (int j = month; j < radilog.get(0).d.GetMonth(); j++) {
+                t.SetMonth(j);
+                std::cout << t.ConvertMonthToString() << " : No Data" << std::endl;
+            }
+            month = radilog.get(0).d.GetMonth();
+        }
+
+        for (auto& radiItem : radilog) {
+            if (radiItem.d.GetMonth() == month) {
+                if (!isinf(radiItem.value)) radiArray.push(radiItem.value);
+            }
+            else {
+                t.SetMonth(month);
+                month++;
+                float totalRadi = sumCal(radiArray, radiArray.getSize());
+                std::cout << t.ConvertMonthToString() << ": " << totalRadi << " kWh/m^2" << std::endl;
+                Vector<float> radiArray;
+                while (month < radiItem.d.GetMonth()) {
+                    t.SetMonth(month);
+                    std::cout << t.ConvertMonthToString() << " : No Data" << std::endl;
+                    month++;
+                }
+                if (radiItem.d.GetMonth() == month) {
+                    if (!isinf(radiItem.value)) radiArray.push(radiItem.value);
+                }
+            }
+        }
+        t.SetMonth(month);
+        float totalRadi = sumCal(radiArray, radiArray.getSize());
+        std::cout << t.ConvertMonthToString() << ": " << totalRadi << " kWh/m^2" << std::endl;
+        //If last month is not Dec, we continue to print no data
+        while (++month < 13) {
+            t.SetMonth(month);
+            std::cout << t.ConvertMonthToString() << " : No Data" << std::endl;
+        }
+
+    }
+
+    
     return 0;
 }
 
